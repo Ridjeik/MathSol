@@ -12,4 +12,9 @@ internal class ActionNode(string action, IAstNode operand) : IAstNode
     {
         return other is ActionNode actionNode && actionNode.Action == this.Action && actionNode.Operand.Equals(this.Operand);
     }
+
+    public override string ToString()
+    {
+        return $"{Action} ({Operand})";
+    }
 }

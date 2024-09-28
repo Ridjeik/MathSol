@@ -1,6 +1,8 @@
-﻿namespace MathSol.Interpreter.Parser.Interfaces;
+﻿using MathSol.Interpreter.Tokenizer.Interface;
+
+namespace MathSol.Interpreter.Parser.Interfaces;
 
 internal interface IParser
 {
-    IAstNode Parse();
+    public IAstNode Parse(IEnumerator<IToken> tokens);
 }

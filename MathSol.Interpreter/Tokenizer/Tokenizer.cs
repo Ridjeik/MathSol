@@ -9,8 +9,9 @@ internal class Tokenizer : ITokenizer
     private static readonly IEnumerable<ITokenReader> TokenParsers =
     [
         new KeywordTokenReader(),
-        new PlusTokenReader(),
         new NumberTokenReader(),
+        new PlusTokenReader(),
+        new MinusTokenReader(),
         new ParenthesesTokensReader(),
     ];
 
