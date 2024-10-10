@@ -1,17 +1,12 @@
-﻿using MathSol.Interpreter.Lib;
+﻿using MathSol.Interpreter.FileSystem;
+using MathSol.Interpreter.Shared.Tokens.Interfaces;
 using MathSol.Interpreter.Tokenizer.Interface;
-using MathSol.Interpreter.Tokenizer.Parsers;
 
 namespace MathSol.Interpreter.Tokenizer;
 
-public class Tokenizer : ITokenizer
+internal class Tokenizer(IEnumerable<ITokenReader> tokenReaders) : ITokenizer
 {
-    private static readonly IEnumerable<ITokenReader> TokenParsers =
-    [
-        new KeywordTokenReader(),
-        new PlusTokenReader(),
-        new NumberTokenReader(),
-    ];
+    private IEnumerable<ITokenReader> TokenReaders { get; } = tokenReaders;
 
     public IEnumerable<IToken> Tokenize(CodeFile codeFile)
     {
@@ -19,7 +14,7 @@ public class Tokenizer : ITokenizer
 
         while (!codeFile.IsEnded)
         {
-            foreach (ITokenReader tokenParser in TokenParsers)
+            foreach (ITokenReader tokenParser in TokenReaders)
             {
                 var token = tokenParser.TryGetTokenFromCodeFile(codeFile);
                 if (token != null)

@@ -11,8 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MathSol.Interpreter.FileSystem\MathSol.Interpreter.FileSystem.csproj" />
-    <ProjectReference Include="..\MathSol.StdLib\MathSol.Interpreter.StdLib.csproj" />
+    <ProjectReference Include="..\MathSol.Parser.Tokens\MathSol.Interpreter.Shared.csproj" />
   </ItemGroup>
 
 </Project>
