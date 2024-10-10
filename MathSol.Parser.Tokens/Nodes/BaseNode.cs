@@ -12,7 +12,7 @@ public abstract class BaseNode : IAstNode
         if (GetType() != other.GetType())
             return false;
 
-        if (this is IAstNodeWithOperands operandNode && other is IAstNodeWithOperands otherOperandNode)
+        if (this is IOperatorAstNode operandNode && other is IOperatorAstNode otherOperandNode)
         {
             return operandNode.Operands.SequenceEqual(otherOperandNode.Operands);
         }
@@ -32,7 +32,7 @@ public abstract class BaseNode : IAstNode
     {
         int hash = GetType().GetHashCode();
 
-        if (this is IAstNodeWithOperands operandNode)
+        if (this is IOperatorAstNode operandNode)
         {
             foreach (var operand in operandNode.Operands)
             {

@@ -1,6 +1,6 @@
-﻿using MathSol.Interpreter.Rules.Enums;
+﻿using MathSol.Interpreter.StdLib.Enums;
 
-namespace MathSol.Interpreter.Rules.Attributes;
+namespace MathSol.Interpreter.StdLib.Attributes;
 
 [AttributeUsage(AttributeTargets.Class)]
 internal class RuleTypeAttribute(RuleType ruleType) : Attribute

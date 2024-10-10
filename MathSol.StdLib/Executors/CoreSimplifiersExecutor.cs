@@ -1,11 +1,11 @@
-﻿using MathSol.Interpreter.Rules.Enums;
-using MathSol.Interpreter.Rules.Interfaces;
-using MathSol.Interpreter.Shared.Nodes.Interfaces;
+﻿using MathSol.Interpreter.Shared.Nodes.Interfaces;
+using MathSol.Interpreter.StdLib.Enums;
+using MathSol.Interpreter.StdLib.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MathSol.Interpreter.Rules.Executors;
+namespace MathSol.Interpreter.StdLib.Executors;
 
-public class CoreSimplifiersExecutor([FromKeyedServices(RuleType.CoreSimplification)] IEnumerable<INodeRule> rules) : IRulesExecutor
+internal class CoreSimplifiersExecutor([FromKeyedServices(RuleType.CoreSimplification)] IEnumerable<INodeRule> rules) : IRulesExecutor
 {
     private readonly IEnumerable<INodeRule> CoreSimplificationRules = rules;
 

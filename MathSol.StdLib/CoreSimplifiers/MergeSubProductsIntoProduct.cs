@@ -1,9 +1,9 @@
-﻿using MathSol.Interpreter.Rules.Attributes;
-using MathSol.Interpreter.Rules.BaseRules;
-using MathSol.Interpreter.Shared.Nodes;
+﻿using MathSol.Interpreter.Shared.Nodes;
 using MathSol.Interpreter.Shared.Nodes.Interfaces;
+using MathSol.Interpreter.StdLib.Attributes;
+using MathSol.Interpreter.StdLib.BaseRules;
 
-namespace MathSol.Interpreter.Rules.CoreSimplifiers;
+namespace MathSol.Interpreter.StdLib.CoreSimplifiers;
 
 [RuleType(Enums.RuleType.CoreSimplification)]
 internal class MergeSubProductsIntoProduct : RecursiveRule

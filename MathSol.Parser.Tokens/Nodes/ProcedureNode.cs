@@ -2,10 +2,12 @@
 
 namespace MathSol.Interpreter.Shared.Nodes;
 
-public class ProcedureNode(string procedureName, params IAstNode[] operands) : BaseNode, IAstNodeWithOperands
+public class ProcedureNode(string procedureName, params IAstNode[] operands) : BaseNode, IOperatorAstNode
 {
     public string ProcedureName { get; } = procedureName;
     public IEnumerable<IAstNode> Operands { get; set; } = operands;
+
+    public string Operator => ProcedureName;
 
     public override string ToString()
     {

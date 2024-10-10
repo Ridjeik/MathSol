@@ -1,7 +1,7 @@
-﻿using MathSol.Interpreter.Rules.Interfaces;
-using MathSol.Interpreter.Shared.Nodes.Interfaces;
+﻿using MathSol.Interpreter.Shared.Nodes.Interfaces;
+using MathSol.Interpreter.StdLib.Interfaces;
 
-namespace MathSol.Interpreter.Rules.BaseRules;
+namespace MathSol.Interpreter.StdLib.BaseRules;
 
 internal abstract class RecursiveRule : INodeRule
 {

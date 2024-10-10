@@ -1,7 +1,7 @@
-﻿using MathSol.Interpreter.Rules.Executors;
-using MathSol.Interpreter.StdLib.Interfaces;
+﻿using MathSol.Interpreter.StdLib.Interfaces;
 using MathSol.Interpreter.Shared.Nodes.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using MathSol.Interpreter.StdLib.Executors;
 
 namespace MathSol.Interpreter.StdLib.Functions;
 

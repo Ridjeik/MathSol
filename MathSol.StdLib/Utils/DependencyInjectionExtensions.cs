@@ -1,4 +1,6 @@
-﻿using MathSol.Interpreter.StdLib.Interfaces;
+﻿using MathSol.Interpreter.StdLib.Attributes;
+using MathSol.Interpreter.StdLib.Executors;
+using MathSol.Interpreter.StdLib.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -11,7 +13,9 @@ public static class DependencyInjectionExtensions
         ArgumentNullException.ThrowIfNull(services, nameof(services));
 
         return services
+            .AddSingleton<CoreSimplifiersExecutor>()
             .RegisterProcedureImplementation()
+            .RegisterRules()
             .AddSingleton<IProcedureImplementationFactory, BuiltInProcedureImplementationFactory>();
     }
 
@@ -34,7 +38,25 @@ public static class DependencyInjectionExtensions
             services.AddKeyedSingleton(obj.FunctionName, obj);
         }
 
-        
+        return services;
+    }
+
+    private static IServiceCollection RegisterRules(this IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services, nameof(services));
+
+        var assembly = Assembly.GetExecutingAssembly();
+        var rules = assembly.GetTypes().Where(t => typeof(INodeRule).IsAssignableFrom(t) && !t.IsAbstract);
+
+        foreach (var rule in rules)
+        {
+            var ruleTypes = rule.GetCustomAttributes<RuleTypeAttribute>().Select(attr => attr.RuleType);
+
+            foreach (var type in ruleTypes)
+            {
+                services.AddKeyedSingleton(typeof(INodeRule), type, rule);
+            }
+        }
 
         return services;
     }

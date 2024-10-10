@@ -1,5 +1,4 @@
-﻿using MathSol.Interpreter.StdLib.Interfaces;
-using MathSol.Interpreter.Shared.Nodes.Interfaces;
+﻿using MathSol.Interpreter.Shared.Nodes.Interfaces;
 using MathSol.Interpreter.Shared.Nodes;
 
 namespace MathSol.Interpreter.StdLib.Functions;

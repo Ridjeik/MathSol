@@ -1,11 +1,12 @@
-﻿using MathSol.Interpreter.Rules.Attributes;
-using MathSol.Interpreter.Rules.BaseRules;
-using MathSol.Interpreter.Shared.Nodes;
+﻿using MathSol.Interpreter.Shared.Nodes;
 using MathSol.Interpreter.Shared.Nodes.Interfaces;
+using MathSol.Interpreter.StdLib.Attributes;
+using MathSol.Interpreter.StdLib.BaseRules;
+using MathSol.Interpreter.StdLib.Enums;
 
-namespace MathSol.Interpreter.Rules.CoreSimplifiers;
+namespace MathSol.Interpreter.StdLib.CoreSimplifiers;
 
-[RuleType(Enums.RuleType.CoreSimplification)]
+[RuleType(RuleType.CoreSimplification)]
 internal class BringNumbersAsLastOperandsInAddition : RecursiveRule
 {
     protected override IAstNode ExecuteRecursive(IAstNode node)

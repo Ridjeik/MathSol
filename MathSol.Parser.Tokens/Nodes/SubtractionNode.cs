@@ -2,12 +2,14 @@
 
 namespace MathSol.Interpreter.Shared.Nodes;
 
-public class SubtractionNode(IAstNode left, IAstNode right) : BaseNode, IAstNodeWithOperands
+public class SubtractionNode(IAstNode left, IAstNode right) : BaseNode, IOperatorAstNode
 {
     public IAstNode Left { get; private set; } = left;
     public IAstNode Right { get; private set; } = right;
 
     public IEnumerable<IAstNode> Operands => [Left, Right];
+
+    public string Operator => "-";
 
     public override string ToString()
     {
