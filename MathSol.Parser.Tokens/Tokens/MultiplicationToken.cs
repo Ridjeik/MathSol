@@ -1,6 +1,6 @@
 ﻿namespace MathSol.Interpreter.Shared.Tokens;
 
-public class MultiplicationToken : OperatorToken
+public class MultiplicationToken : OneCharToken
 {
-    public override char OperationChar => '*';
+    public override char TokenChar => '*';
 }

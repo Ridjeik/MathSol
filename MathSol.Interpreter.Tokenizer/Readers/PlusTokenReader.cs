@@ -2,7 +2,6 @@
 
 namespace MathSol.Interpreter.Tokenizer.Readers;
 
-internal class PlusTokenReader : OperatorTokenReader<PlusToken>
+internal class PlusTokenReader : OneCharTokenReader<PlusToken>
 {
-    public override char OperationChar => '+';
 }

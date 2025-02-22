@@ -2,7 +2,6 @@
 
 namespace MathSol.Interpreter.Tokenizer.Readers;
 
-internal class MinusTokenReader : OperatorTokenReader<MinusToken>
+internal class MinusTokenReader : OneCharTokenReader<MinusToken>
 {
-    public override char OperationChar => '-';
 }

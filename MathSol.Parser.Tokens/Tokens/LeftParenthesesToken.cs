@@ -1,6 +1,6 @@
 ﻿namespace MathSol.Interpreter.Shared.Tokens;
 
-public class LeftParenthesesToken : OperatorToken
+public class LeftParenthesesToken : OneCharToken
 {
-    public override char OperationChar => '(';
+    public override char TokenChar => '(';
 }

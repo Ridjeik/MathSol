@@ -1,5 +1,8 @@
 ﻿using MathSol.Interpreter.Shared.Nodes;
 using MathSol.Interpreter.Shared.Nodes.Interfaces;
+using MathSol.Interpreter.StdLib.Attributes;
+using MathSol.Interpreter.StdLib.Interfaces;
+using System.Reflection;
 
 namespace MathSol.Interpreter.StdLib.Utils
 {
@@ -15,6 +18,27 @@ namespace MathSol.Interpreter.StdLib.Utils
         {
             if (setNode.Operands.Count() != v)
                 throw new ArgumentException($"Set expected to contain {v} elements, but it contains {setNode.Operands.Count()}");
+        }
+
+        public static int GetParametersCount(this Type procedureImplementationType)
+        {
+            if (!procedureImplementationType.IsAssignableTo(typeof(IBuiltinFunctionImplementation)))
+            {
+                throw new ArgumentException("Procedure implementation type must implement IProcedureImplementation interface");
+            }
+
+            return procedureImplementationType.GetCustomAttribute<FunctionParametersCountAttribute>()?.ParametersCount ?? 0;
+        }
+
+        public static string GetFunctionName(this Type procedureImplementationType)
+        {
+            if (!procedureImplementationType.IsAssignableTo(typeof(IBuiltinFunctionImplementation)))
+            {
+                throw new ArgumentException("Procedure implementation type must implement IProcedureImplementation interface");
+            }
+
+            return procedureImplementationType.GetCustomAttribute<FunctionNameAttribute>()?.Name
+                ?? procedureImplementationType.Name.Replace("Procedure", string.Empty);
         }
     }
 }

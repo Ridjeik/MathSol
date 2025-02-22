@@ -9,7 +9,7 @@ internal static class TokensEnumeratorExtensions
     {
         if (tokens.Current is not TToken)
         {
-            throw new InvalidOperationException();
+            throw new InvalidOperationException($"Expected {typeof(TToken)}, but got {tokens.Current.GetType().Name}");
         }
 
         tokens.MoveNext();
@@ -27,6 +27,16 @@ internal static class TokensEnumeratorExtensions
 
     public static void SkipAny(this IEnumerator<IToken> tokens)
     {
+        tokens.MoveNext();
+    }
+
+    public static void SkipAnyOf(this IEnumerator<IToken> tokens, params Type[] types)
+    {
+        if (!types.Any(t => t.IsInstanceOfType(tokens.Current)))
+        {
+            throw new InvalidOperationException();
+        }
+
         tokens.MoveNext();
     }
 
@@ -59,5 +69,14 @@ internal static class TokensEnumeratorExtensions
         var token = tokens.Current;
         tokens.MoveNext();
         return token;
+    }
+
+    public static IEnumerable<IToken> ConsumeWhile(this IEnumerator<IToken> tokens, Func<IToken, bool> predicate)
+    {
+        while (predicate(tokens.Current))
+        {
+            yield return tokens.Current;
+            tokens.MoveNext();
+        }
     }
 }

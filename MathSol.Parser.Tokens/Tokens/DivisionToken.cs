@@ -1,6 +1,6 @@
 ﻿namespace MathSol.Interpreter.Shared.Tokens;
 
-public class DivisionToken : OperatorToken
+public class DivisionToken : OneCharToken
 {
-    public override char OperationChar => '/';
+    public override char TokenChar => '/';
 }

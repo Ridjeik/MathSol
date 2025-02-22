@@ -1,14 +1,16 @@
 ﻿using MathSol.Interpreter.Shared.Nodes;
 using MathSol.Interpreter.Shared.Nodes.Interfaces;
+using MathSol.Interpreter.StdLib.Attributes;
 using MathSol.Interpreter.StdLib.Utils;
+using MathSol.Interpreter.StdLib.Interfaces;
 
 namespace MathSol.Interpreter.StdLib.Functions;
 
-internal class ConstructProcedure : ProcedureImplementation
+[FunctionName("construct")]
+[FunctionParametersCount(2)]
+internal class ConstructProcedure (IVariableScopeFactory variables) : FunctionImplementation
 {
-    public override string FunctionName => "construct";
-
-    public override int NumberOfOperands => 2;
+    public override IEnumerable<string> Arguments => ["operator", "operands"];
 
     protected override IAstNode ExecuteImpl(params IAstNode[] astNodes)
     { 
@@ -39,8 +41,30 @@ internal class ConstructProcedure : ProcedureImplementation
             "-" => GetSubtractionNode(set),
             "/" => GetDivisionNode(set),
             "^" => GetExponentNode(set),
-            _ => throw new InvalidOperationException($"Operator {@operator} is not supported"),
+            "=" => GetEqualityNode(set),
+            _ => TryGetFunctionNode(@operator, set),
         };
+    }
+
+    private static EqualityNode GetEqualityNode(SetNode set)
+    {
+        FunctionsUtil.EnsureSet(set, 2);
+        return new EqualityNode(set.First(), set.Last());
+    }
+
+    private IAstNode TryGetFunctionNode(string @operator, SetNode set)
+    {
+        var def = variables.GetCurrentScope().GetVariable(new VariableNode(@operator));
+        if (def is SubProgramDefinitionNode)
+        {
+            return new SubprogramCallNode(@operator, set.Operands.ToArray());
+        }
+        else if(def is FunctionDeclarationNode)
+        {
+            return new FunctionCallNode(@operator, set.Operands.ToArray());
+        }
+
+        throw new InvalidOperationException($"Operator {@operator} is not supported");
     }
 
     private static ExponentNode GetExponentNode(SetNode set)

@@ -1,6 +1,6 @@
 ﻿namespace MathSol.Interpreter.Shared.Tokens;
 
-public class ExponentToken : OperatorToken
+public class ExponentToken : OneCharToken
 {
-    public override char OperationChar => '^';
+    public override char TokenChar => '^';
 }

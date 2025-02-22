@@ -1,6 +1,6 @@
 ﻿namespace MathSol.Interpreter.Shared.Tokens;
 
-public class MinusToken : OperatorToken
+public class MinusToken : OneCharToken
 {
-    public override char OperationChar => '-';
+    public override char TokenChar => '-';
 }

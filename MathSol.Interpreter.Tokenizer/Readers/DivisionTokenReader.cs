@@ -2,8 +2,7 @@
 
 namespace MathSol.Interpreter.Tokenizer.Readers;
 
-internal class DivisionTokenReader : OperatorTokenReader<DivisionToken>
+internal class DivisionTokenReader : OneCharTokenReader<DivisionToken>
 {
-    public override char OperationChar => '/';
 }
 

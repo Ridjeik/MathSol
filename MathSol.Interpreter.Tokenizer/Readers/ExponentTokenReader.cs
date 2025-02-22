@@ -2,7 +2,6 @@
 
 namespace MathSol.Interpreter.Tokenizer.Readers;
 
-internal class ExponentTokenReader : OperatorTokenReader<ExponentToken>
+internal class ExponentTokenReader : OneCharTokenReader<ExponentToken>
 {
-    public override char OperationChar => '^';
 }

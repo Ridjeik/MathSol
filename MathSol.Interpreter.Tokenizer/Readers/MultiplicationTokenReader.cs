@@ -2,7 +2,6 @@
 
 namespace MathSol.Interpreter.Tokenizer.Readers;
 
-internal class MultiplicationTokenReader : OperatorTokenReader<MultiplicationToken>
+internal class MultiplicationTokenReader : OneCharTokenReader<MultiplicationToken>
 {
-    public override char OperationChar => '*';
 }

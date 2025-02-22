@@ -1,13 +1,15 @@
 ﻿using MathSol.Interpreter.Shared.Nodes.Interfaces;
+using MathSol.Interpreter.StdLib.Attributes;
 using MathSol.Interpreter.StdLib.Enums;
 using MathSol.Interpreter.StdLib.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace MathSol.Interpreter.StdLib.Executors;
 
-internal class CoreSimplifiersExecutor([FromKeyedServices(RuleType.CoreSimplification)] IEnumerable<INodeRule> rules) : IRulesExecutor
+public class CoreSimplifiersExecutor(IServiceProvider serviceProvider) : IRulesExecutor
 {
-    private readonly IEnumerable<INodeRule> CoreSimplificationRules = rules;
+    private readonly IEnumerable<INodeRule> CoreSimplificationRules = serviceProvider.GetKeyedServices<INodeRule>(RuleType.CoreSimplification).OrderByDescending(rule => rule.GetType().GetCustomAttribute<RulePriorityAttribute>()?.Priority ?? 0);
 
     public IAstNode ExecuteRules(IAstNode node)
     {

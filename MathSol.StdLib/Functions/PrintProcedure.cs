@@ -2,19 +2,20 @@
 using MathSol.Interpreter.Shared.Nodes.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using MathSol.Interpreter.StdLib.Executors;
+using MathSol.Interpreter.StdLib.Attributes;
 
 namespace MathSol.Interpreter.StdLib.Functions;
 
-internal class PrintProcedure 
-    (CoreSimplifiersExecutor coreSimplifiersExecutor,
-    [FromKeyedServices("printAST")] IProcedureImplementation printAST) 
-    : ProcedureImplementation
+[FunctionName("print")]
+[FunctionParametersCount(1)]
+internal class PrintProcedure
+    (IServiceProvider serviceProvider,
+    [FromKeyedServices("printAST")] IBuiltinFunctionImplementation printAST) 
+    : FunctionImplementation
 {
-    public override string FunctionName => "print";
+    public override IEnumerable<string> Arguments => ["expression"];
 
-    public override int NumberOfOperands => 1;
-
-    private CoreSimplifiersExecutor CoreSimplifiersExecutor { get; } = coreSimplifiersExecutor;
+    private CoreSimplifiersExecutor CoreSimplifiersExecutor => serviceProvider.GetRequiredService<CoreSimplifiersExecutor>();
 
     protected override IAstNode ExecuteImpl(params IAstNode[] astNodes)
     {

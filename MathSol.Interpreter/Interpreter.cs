@@ -1,8 +1,7 @@
-﻿using MathSol.Interpreter.Executor.Interfaces;
-using MathSol.Interpreter.Executor.Utils;
-using MathSol.Interpreter.FileSystem;
+﻿using MathSol.Interpreter.FileSystem;
 using MathSol.Interpreter.Parser.Interfaces;
 using MathSol.Interpreter.Parser.Utils;
+using MathSol.Interpreter.StdLib.Interfaces;
 using MathSol.Interpreter.StdLib.Utils;
 using MathSol.Interpreter.Tokenizer.Interface;
 using MathSol.Interpreter.Tokenizer.Utils;
@@ -23,7 +22,6 @@ public class Interpreter
     {
         _serviceCollection.AddTokenizer();
         _serviceCollection.AddParser();
-        _serviceCollection.AddExecutor();
         _serviceCollection.AddStdLib();
     }
 
@@ -34,11 +32,16 @@ public class Interpreter
         var serviceProvider = this._serviceCollection.BuildServiceProvider();
 
         var tokens = serviceProvider.GetRequiredService<ITokenizer>().Tokenize(codeFile);
+        //tokens.ToList().ForEach(Console.WriteLine);
+
+
         var tokensEnumerator = tokens.GetEnumerator();
         tokensEnumerator.MoveNext();
 
-        var syntaxTree = serviceProvider.GetRequiredService<IParser>().Parse(tokensEnumerator);
 
-        serviceProvider.GetRequiredService<IExecutor>().Execute(syntaxTree);
+        var syntaxTree = serviceProvider.GetRequiredService<IParser>().Parse(tokensEnumerator);
+        //Console.WriteLine(syntaxTree.ToString());
+        
+        serviceProvider.GetRequiredService<INodeExecutor>().Execute(syntaxTree);
     }
 }

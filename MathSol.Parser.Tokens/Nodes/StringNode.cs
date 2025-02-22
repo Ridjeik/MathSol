@@ -1,4 +1,6 @@
-﻿namespace MathSol.Interpreter.Shared.Nodes;
+﻿using MathSol.Interpreter.Shared.Nodes.Interfaces;
+
+namespace MathSol.Interpreter.Shared.Nodes;
 
 public class StringNode(string @string) : BaseNode
 {
@@ -7,5 +9,10 @@ public class StringNode(string @string) : BaseNode
     public override string ToString()
     {
         return $"\"{@string}\"";
+    }
+
+    public override bool Equals(IAstNode? other)
+    {
+        return other is StringNode stringNode && stringNode.String == String;
     }
 }

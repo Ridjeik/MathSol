@@ -4,7 +4,7 @@ namespace MathSol.Interpreter.Shared.Nodes;
 
 public class MultiplicationNode(params IAstNode[] operands) : BaseNode, IOperatorAstNode
 {
-    public IEnumerable<IAstNode> Operands { get; set; } = [.. operands];
+    public IEnumerable<IAstNode> Operands { get; set; } = operands.AsEnumerable();
 
     public string Operator => "*";
 

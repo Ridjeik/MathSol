@@ -1,6 +1,7 @@
 ﻿using MathSol.Interpreter.StdLib.Attributes;
 using MathSol.Interpreter.StdLib.Executors;
 using MathSol.Interpreter.StdLib.Interfaces;
+using MathSol.Interpreter.StdLib.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -13,10 +14,12 @@ public static class DependencyInjectionExtensions
         ArgumentNullException.ThrowIfNull(services, nameof(services));
 
         return services
+            .RegisterRules()
             .AddSingleton<CoreSimplifiersExecutor>()
             .RegisterProcedureImplementation()
-            .RegisterRules()
-            .AddSingleton<IProcedureImplementationFactory, BuiltInProcedureImplementationFactory>();
+            .AddSingleton<IBuiltinFunctionImplementationFactory, BuiltInProcedureImplementationFactory>()
+            .AddSingleton<IVariableScopeFactory, VariableScopeFactory>()
+            .AddSingleton<INodeExecutor, ProgramExecutor>();
     }
 
     private static IServiceCollection RegisterProcedureImplementation(this IServiceCollection services)
@@ -25,17 +28,15 @@ public static class DependencyInjectionExtensions
 
         var assembly = Assembly.GetExecutingAssembly();
 
-        var tokenReaderTypes = assembly.GetTypes().Where(t => typeof(IProcedureImplementation)
+        var procedureImplementationTypes = assembly.GetTypes().Where(t => typeof(IBuiltinFunctionImplementation)
             .IsAssignableFrom(t) &&
             t.IsClass &&
             !t.IsAbstract);
 
-        foreach (var type in tokenReaderTypes)
+        foreach (var type in procedureImplementationTypes)
         {
-            var obj = ActivatorUtilities.CreateInstance(services.BuildServiceProvider(), type) as IProcedureImplementation ?? throw new InvalidOperationException($"Failed to create instance of {type.Name}");
-
-            services.AddSingleton(obj);
-            services.AddKeyedSingleton(obj.FunctionName, obj);
+            services.AddSingleton(typeof(IBuiltinFunctionImplementation), type);
+            services.AddKeyedSingleton(typeof(IBuiltinFunctionImplementation), type.GetFunctionName(), type);
         }
 
         return services;
@@ -46,16 +47,17 @@ public static class DependencyInjectionExtensions
         ArgumentNullException.ThrowIfNull(services, nameof(services));
 
         var assembly = Assembly.GetExecutingAssembly();
-        var rules = assembly.GetTypes().Where(t => typeof(INodeRule).IsAssignableFrom(t) && !t.IsAbstract);
 
-        foreach (var rule in rules)
+        var ruleTypes = assembly.GetTypes().Where(t => typeof(INodeRule)
+            .IsAssignableFrom(t) &&
+            t.IsClass &&
+            !t.IsAbstract);
+
+        foreach (var type in ruleTypes)
         {
-            var ruleTypes = rule.GetCustomAttributes<RuleTypeAttribute>().Select(attr => attr.RuleType);
-
-            foreach (var type in ruleTypes)
-            {
-                services.AddKeyedSingleton(typeof(INodeRule), type, rule);
-            }
+            var ruleTypesAttributesValues = type.GetCustomAttributes<RuleTypeAttribute>()?.Select(t => t.RuleType) ?? throw new InvalidOperationException($"Failed to get RuleTypeAttributes for {type.Name}");
+            services.AddSingleton(typeof(INodeRule), type);
+            ruleTypesAttributesValues.ToList().ForEach(ruleType => services.AddKeyedSingleton(typeof(INodeRule), ruleType, type));
         }
 
         return services;

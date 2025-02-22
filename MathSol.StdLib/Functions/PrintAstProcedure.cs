@@ -1,13 +1,14 @@
 ﻿using MathSol.Interpreter.Shared.Nodes.Interfaces;
 using MathSol.Interpreter.Shared.Nodes;
+using MathSol.Interpreter.StdLib.Attributes;
 
 namespace MathSol.Interpreter.StdLib.Functions;
 
-internal class PrintAstProcedure : ProcedureImplementation
+[FunctionName("printAST")]
+[FunctionParametersCount(1)]
+internal class PrintAstProcedure : FunctionImplementation
 {
-    public override string FunctionName => "printAST";
-
-    public override int NumberOfOperands => 1;
+    public override IEnumerable<string> Arguments => ["expression"];
 
     protected override IAstNode ExecuteImpl (params IAstNode[] astNodes)
     {

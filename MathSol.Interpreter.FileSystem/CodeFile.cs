@@ -1,4 +1,6 @@
-﻿namespace MathSol.Interpreter.FileSystem;
+﻿using System.Text;
+
+namespace MathSol.Interpreter.FileSystem;
 
 public class CodeFile(string fileName)
 {
@@ -18,6 +20,8 @@ public class CodeFile(string fileName)
     public bool IsEnded => Position >= Code.Length;
     public char? CurrentChar => IsEnded ? null : Code[Position];
     public int CharsLeft => Code.Length - Position;
+    public string RestOfCode => Code.Substring(Position);
+    public string FileName => fileName;
 
     public char? PeekChar()
     {
@@ -47,6 +51,20 @@ public class CodeFile(string fileName)
         var result = PeekChars(charCount);
         Position += result.Length;
         return result;
+    }
+
+    public string ConsumeUntil(Predicate<char> predicate)
+    {
+        SkipWhitespaces();
+
+        var result = new StringBuilder();
+        while (CurrentChar is char c && predicate(c))
+        {
+            result.Append(c);
+            Position++;
+        }
+
+        return result.ToString();
     }
 
     private void SkipWhitespaces()
