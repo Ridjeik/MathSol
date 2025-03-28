@@ -10,9 +10,4 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\MathSol.Interpreter.Parser\MathSol.Interpreter.Parser.csproj" />
-    <ProjectReference Include="..\MathSol.Interpreter.Tokenizer\MathSol.Interpreter.Tokenizer.csproj" />
-  </ItemGroup>
-
 </Project>

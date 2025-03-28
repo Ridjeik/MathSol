@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MathSol.Interpreter.FileSystem\MathSol.Interpreter.FileSystem.csproj" />
     <ProjectReference Include="..\MathSol.Interpreter\MathSol.Interpreter.csproj" />
   </ItemGroup>
 
