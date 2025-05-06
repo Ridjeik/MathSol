@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interpreter", "Interpreter"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MathSol.CUI", "MathSol.CUI\MathSol.CUI.csproj", "{B735E625-954D-4E67-BE69-7E4B4950E1E5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MathSol.IDE", "MathSol.IDE\MathSol.IDE.csproj", "{620F13CD-1DF1-4FD7-8829-CDA87273867F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{B735E625-954D-4E67-BE69-7E4B4950E1E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B735E625-954D-4E67-BE69-7E4B4950E1E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B735E625-954D-4E67-BE69-7E4B4950E1E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{620F13CD-1DF1-4FD7-8829-CDA87273867F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{620F13CD-1DF1-4FD7-8829-CDA87273867F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{620F13CD-1DF1-4FD7-8829-CDA87273867F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{620F13CD-1DF1-4FD7-8829-CDA87273867F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

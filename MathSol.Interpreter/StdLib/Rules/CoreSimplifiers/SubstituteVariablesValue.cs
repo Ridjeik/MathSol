@@ -26,8 +26,6 @@ internal class SubstituteVariablesValue(IVariableScopeFactory variableScopeFacto
                 return functionDeclarationNode.Body;
             }
 
-            
-
             return value ?? variableNode;
         }
 
@@ -47,6 +45,28 @@ internal class SubstituteVariablesValue(IVariableScopeFactory variableScopeFacto
 
             var paramsWithValues = func.Function.Parameters.Zip(functionCallNode.Arguments).Select(pair => new EqualityNode(pair.First, pair.Second));
             return substitute.Execute(func.Body, new SetNode(paramsWithValues));
+        }
+
+        if (node is DynamicFunctionCallNode dynamicFunctionCallNode)
+        {
+            var variableScope = variableScopeFactory.GetCurrentScope();
+            IAstNode? trueFuncName = variableScope.GetVariable(new VariableNode(dynamicFunctionCallNode.Operator));
+            IAstNode? value = variableScope.GetVariable(trueFuncName as VariableNode ?? throw new Exception("FATAL"));
+            if (value is not FunctionDeclarationNode or SubProgramDefinitionNode)
+            {
+                throw new Exception($"Variable {dynamicFunctionCallNode.Operator} was expected to contain function!");
+            }
+
+            if (value is FunctionDeclarationNode func)
+            {
+                return new FunctionCallNode(func.Function.Name, dynamicFunctionCallNode.Operands);
+            }
+
+            if (value is SubProgramDefinitionNode subProgram)
+            {
+                return new SubprogramCallNode(subProgram.Name, [.. dynamicFunctionCallNode.Operands]);
+            }
+
         }
 
         return node;

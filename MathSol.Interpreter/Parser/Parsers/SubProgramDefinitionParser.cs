@@ -18,11 +18,26 @@ internal class SubProgramDefinitionParser(IServiceProvider serviceProvider) : II
         var identifier = tokens.Consume<IdentifierToken>();
         tokens.Skip<LeftParenthesesToken>();
 
-        var parameters = new List<VariableNode>();
+        var parameters = new List<IAstNode>();
         while (tokens.Current is not RightParenthesesToken)
         {
             var parameter = tokens.Consume<IdentifierToken>();
-            parameters.Add(new VariableNode(parameter.Value));
+            if (tokens.Current is LeftParenthesesToken)
+            {
+                tokens.Skip<LeftParenthesesToken>();
+                var subParameters = new List<VariableNode>();
+                while (tokens.Current is not RightParenthesesToken)
+                {
+                    var subParameter = tokens.Consume<IdentifierToken>();
+                    subParameters.Add(new VariableNode(subParameter.Value));
+                    if (tokens.Current is not RightParenthesesToken)
+                        tokens.Skip<CommaToken>();
+                }
+                tokens.Skip<RightParenthesesToken>();
+                parameters.Add(new FunctionNode(parameter.Value, subParameters));
+            }
+            else
+                parameters.Add(new VariableNode(parameter.Value));
             if (tokens.Current is not RightParenthesesToken)
                 tokens.Skip<CommaToken>();
         }

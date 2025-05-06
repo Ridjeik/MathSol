@@ -90,6 +90,17 @@ public class CodeFile
         };
     }
 
+    public static CodeFile FromProcessedFile(string filename, string newCode)
+    {
+        ArgumentNullException.ThrowIfNull(filename);
+        ArgumentNullException.ThrowIfNull(newCode);
+        return new CodeFile()
+        {
+            Code = newCode,
+            FileName = filename,
+        };
+    }
+
     public static CodeFile FromCode(string code)
     {
         ArgumentNullException.ThrowIfNull(code);

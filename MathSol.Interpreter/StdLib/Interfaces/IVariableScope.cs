@@ -8,5 +8,5 @@ public interface IVariableScope : IEnumerable<KeyValuePair<VariableNode, IAstNod
     IAstNode? GetVariable(VariableNode variable);
     void SetVariable(VariableNode variable, IAstNode value);
 
-    IVariableScope WithFixed(IEnumerable<VariableNode> variables);
+    IVariableScope WithFixed(IEnumerable<IAstNode> variables);
 }

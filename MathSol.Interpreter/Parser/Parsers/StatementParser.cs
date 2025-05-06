@@ -86,6 +86,14 @@ internal class StatementParser(IServiceProvider serviceProvider) : IInternalPars
             return new ReturnNode(value);
         }
 
+        if (tokens.Current is PercentToken)
+        {
+            tokens.Skip<PercentToken>();
+            tokens.Skip<IncludeToken>();
+            var fileName = tokens.Consume<StringToken>().Value;
+            return new IncludeNode(fileName);
+        }
+
         throw new InvalidOperationException($"Unexpected token {tokens.Current}");
     }
 }

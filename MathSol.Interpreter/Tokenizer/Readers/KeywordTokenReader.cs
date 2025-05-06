@@ -15,7 +15,8 @@ internal class KeywordTokenReader : ITokenReader
         { "else", typeof(ElseToken) },
         { "define", typeof(DefineToken) },
         { "as", typeof(AsToken) },
-        { "return", typeof(ReturnToken) }
+        { "return", typeof(ReturnToken) },
+        { "include", typeof(IncludeToken) },
     };
 
     public IToken? TryGetTokenFromCodeFile(CodeFile codeFile)
@@ -32,7 +33,7 @@ internal class KeywordTokenReader : ITokenReader
                 continue;
             }
 
-            if (Regex.IsMatch(topChars, "\\b"+ kvp.Key + "\\b", RegexOptions.IgnoreCase))
+            if (Regex.IsMatch(topChars, "^"+ kvp.Key + "\\b", RegexOptions.IgnoreCase))
             {
                 codeFile.ConsumeChars(kvp.Key.Length);
                 return (IToken?)Activator.CreateInstance(kvp.Value);

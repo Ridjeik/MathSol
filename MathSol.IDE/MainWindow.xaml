@@ -1,0 +1,199 @@
+﻿<Window x:Class="MathSol.IDE.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MathSol.IDE"
+        mc:Ignorable="d"
+        Title="MathSol IDE" Height="600" Width="900"
+        Background="#1E1E1E">
+
+    <Window.Resources>
+        <Style x:Key="ActivityBarButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#444444"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#555555"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RoundPlayButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Background" Value="#28a745"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="Margin" Value="0,0,15,15"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Ellipse Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#218838"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#1e7e34"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#cccccc"/>
+                                <Setter Property="Foreground" Value="#666666"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition x:Name="SidePanelColumn" Width="250" MinWidth="150"/>
+            <ColumnDefinition x:Name="SplitterColumn" Width="Auto" />
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Row="0" Grid.Column="0" Background="#333333" Padding="5">
+            <StackPanel>
+                <Button x:Name="ExplorerButton" Content="📄" Style="{StaticResource ActivityBarButtonStyle}" Click="ActivityBarButton_Click" Tag="ExplorerPanel"/>
+                <Button x:Name="SearchButton" Content="🔍" Style="{StaticResource ActivityBarButtonStyle}" Click="ActivityBarButton_Click" Tag="SearchPanel"/>
+                <Button x:Name="SettingsButton" Content="⚙️" Style="{StaticResource ActivityBarButtonStyle}" Click="ActivityBarButton_Click" Tag="SettingsPanel" Margin="0"/>
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="0" Grid.Column="1">
+            <Border x:Name="ExplorerPanel" Background="#252526" Padding="10" Visibility="Visible" VerticalAlignment="Stretch">
+                <DockPanel LastChildFill="True">
+                    <TextBlock Text="ПРОВІДНИК" DockPanel.Dock="Top" FontSize="11" Foreground="#CCCCCC" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="0,10,0,0">
+                            <TextBlock Text="📄 test.msl" Foreground="White" Margin="0,2"/>
+                            <TextBlock Text="📄 another_file.msl" Foreground="White" Margin="0,2"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+            <Border x:Name="SearchPanel" Background="#252526" Padding="10" Visibility="Collapsed" VerticalAlignment="Stretch">
+                <DockPanel LastChildFill="True">
+                    <TextBlock Text="ПОШУК" DockPanel.Dock="Top" FontSize="11" Foreground="#CCCCCC" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <StackPanel>
+                        <TextBox Margin="0,5,0,10" Text="Search query..."/>
+                        <TextBlock Text="Search results will appear here." Foreground="#AAAAAA" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+            <Border x:Name="SettingsPanel" Background="#252526" Padding="10" Visibility="Collapsed" VerticalAlignment="Stretch">
+                <DockPanel LastChildFill="True">
+                    <TextBlock Text="НАЛАШТУВАННЯ" DockPanel.Dock="Top" FontSize="11" Foreground="#CCCCCC" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <StackPanel>
+                            <CheckBox Content="Enable Autosave" Foreground="White" Margin="0,5"/>
+                            <TextBlock Text="Theme:" Foreground="White" Margin="0,10,0,2"/>
+                            <ComboBox SelectedIndex="0" Margin="0,0,0,10">
+                                <ComboBoxItem>Dark+</ComboBoxItem>
+                                <ComboBoxItem>Light+</ComboBoxItem>
+                            </ComboBox>
+                            <TextBlock Text="More settings..." Foreground="#AAAAAA"/>
+                        </StackPanel>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        <GridSplitter x:Name="VerticalSplitter" Grid.Row="0" Grid.Column="2"
+                      Width="5"
+                      Background="#333333"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Stretch"
+                      ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
+
+        <Grid Grid.Row="0" Grid.Column="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="200" MinHeight="100"/>
+            </Grid.RowDefinitions>
+
+            <TextBox
+                Grid.Row="0"
+                x:Name="CodeEditor"
+                Text="// Введіть ваш MathSol код тут...&#x0a;f(x) := x^2&#x0a;print(diff(f, x))"
+                Foreground="White"
+                Background="#1E1E1E" FontFamily="Consolas"
+                FontSize="14"
+                AcceptsReturn="True"
+                TextWrapping="NoWrap"
+                VerticalScrollBarVisibility="Auto"
+                HorizontalScrollBarVisibility="Auto"
+                BorderThickness="0"
+                VerticalContentAlignment="Top"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"/>
+
+            <Button
+                Grid.Row="0"
+                x:Name="RunButton"
+                Content="▶"
+                Style="{StaticResource RoundPlayButtonStyle}"
+                ToolTip="Run Code"/>
+            <GridSplitter Grid.Row="1"
+                           Height="5"
+                           Background="#333333"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Center"
+                           ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
+
+            <Border Grid.Row="2" Background="#252526" Padding="10">
+                <DockPanel LastChildFill="True">
+                    <TextBlock Text="ВИВІД" DockPanel.Dock="Top" FontSize="11" Foreground="#CCCCCC" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <ScrollViewer x:Name="OutputScrollViewer" VerticalScrollBarVisibility="Auto">
+                        <TextBlock
+                             x:Name="OutputConsole"
+                             Text=">>> Результати виконання будуть тут..."
+                             Foreground="White"
+                             FontFamily="Consolas"
+                             FontSize="12"
+                             TextWrapping="Wrap"/>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Background="#007ACC" Padding="5,3">
+            <TextBlock Text="Готово" Foreground="White" FontSize="11" VerticalAlignment="Center"/>
+        </Border>
+    </Grid>
+</Window>

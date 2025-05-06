@@ -9,9 +9,7 @@ namespace MathSol.Interpreter.Tokenizer;
 
 internal class Tokenizer(IEnumerable<ITokenReader> tokenReaders) : ITokenizer
 {
-    private readonly ImmutableArray<ITokenReader> TokenReaders = tokenReaders
-            .OrderByDescending(t => t.GetType().GetCustomAttribute<TokenReaderPriorityAttribute>()?.Priority ?? 0)
-            .ToImmutableArray();
+    private readonly ImmutableArray<ITokenReader> TokenReaders = [.. tokenReaders.OrderByDescending(t => t.GetType().GetCustomAttribute<TokenReaderPriorityAttribute>()?.Priority ?? 0)];
 
     public IEnumerable<IToken> Tokenize(CodeFile codeFile)
     {

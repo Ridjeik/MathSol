@@ -20,13 +20,22 @@ public class CoreSimplifiersExecutor(IServiceProvider serviceProvider) : IRulesE
 
             foreach (var rule in CoreSimplificationRules)
             {
-                var result = rule.Execute(node);
+                var hasChangedInThisRule = false;
 
-                if (!result.Equals(node))
+                do
                 {
-                    hasChanged = true;
-                    node = result;
-                }
+                    hasChangedInThisRule = false;
+
+                    var result = rule.Execute(node);
+
+                    if (!result.Equals(node))
+                    {
+                        hasChanged = true;
+                        hasChangedInThisRule = true;
+                        node = result;
+                    }
+                } while (hasChangedInThisRule);
+                
             }
 
         } while (hasChanged);

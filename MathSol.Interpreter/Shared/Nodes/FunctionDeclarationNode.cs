@@ -11,4 +11,9 @@ public class FunctionDeclarationNode(FunctionNode function, IAstNode body) : Bas
     {
         return $"{Function} = {Body}";
     }
+
+    public FunctionDeclarationNode WithBody(IAstNode body)
+    {
+        return new FunctionDeclarationNode(Function, body);
+    }
 }

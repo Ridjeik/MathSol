@@ -10,6 +10,16 @@ public class MultiplicationNode(params IAstNode[] operands) : BaseNode, IOperato
 
     public override string ToString()
     {
-        return string.Join(" * ", Operands.Select(o => o.ToString()));
+        if (Operands.Count() == 2)
+        {
+            if (Operands.First() is NumberNode number && Operands.ElementAt(1) is not VariableNode variable)
+            {
+                return $"{number.Value} * ({Operands.ElementAt(1)})";
+            }
+
+            return $"({Operands.First()}) * ({Operands.ElementAt(1)})";
+        }
+
+        return string.Join("*", Operands.Select(o => o.ToString()));
     }
 }

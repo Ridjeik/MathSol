@@ -63,6 +63,13 @@ internal class ConstructProcedure (IVariableScopeFactory variables) : FunctionIm
         {
             return new FunctionCallNode(@operator, set.Operands.ToArray());
         }
+        if (def is VariableNode var)
+        {
+            var defReal = TryGetFunctionNode(var.Name, set);
+            return defReal;
+        }
+
+
 
         throw new InvalidOperationException($"Operator {@operator} is not supported");
     }

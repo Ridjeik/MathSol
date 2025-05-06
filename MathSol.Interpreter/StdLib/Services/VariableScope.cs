@@ -8,7 +8,7 @@ namespace MathSol.Interpreter.StdLib.Services;
 internal class VariableScope : IVariableScope
 {
     private readonly Dictionary<VariableNode, IAstNode> Variables = new();
-    private readonly IEnumerable<VariableNode> ParentOverridedVariables = [];
+    private readonly IEnumerable<IAstNode> ParentOverridedVariables = [];
 
     private IVariableScope? ParentScope { get; }
 
@@ -18,7 +18,7 @@ internal class VariableScope : IVariableScope
         ParentScope = parentScope;
     }
 
-    private VariableScope(IVariableScope? parentScope, IEnumerable<VariableNode> parentOverridedVariables)
+    private VariableScope(IVariableScope? parentScope, IEnumerable<IAstNode> parentOverridedVariables)
         : this(parentScope)
     {
         ParentOverridedVariables = parentOverridedVariables;
@@ -52,7 +52,7 @@ internal class VariableScope : IVariableScope
         return Variables.GetEnumerator();
     }
 
-    public IVariableScope WithFixed(IEnumerable<VariableNode> variables)
+    public IVariableScope WithFixed(IEnumerable<IAstNode> variables)
     {
         return new VariableScope(this, variables);
     }

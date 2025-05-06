@@ -49,7 +49,19 @@ internal class ExecuteSubprograms([FromKeyedServices("construct")] IBuiltinFunct
         var statements = new List<IAstNode>();
         foreach (var (param, value) in subProgramDefinitionNode.SubprogramSignature.Params.Zip(functionNode.Operands))
         {
-            statements.Add(new AssignmentNode(param, value));
+            if (param is VariableNode variable)
+            {
+                statements.Add(new AssignmentNode(variable, value));
+            }
+            else if (param is FunctionNode function)
+            {
+                statements.Add(new FunctionDeclarationNode(function, value));
+            }
+            else
+            {
+                throw new Exception($"Invalid parameter type {param.GetType()}");
+            }
+
         }
 
         statements.Add(subProgramDefinitionNode.Body);

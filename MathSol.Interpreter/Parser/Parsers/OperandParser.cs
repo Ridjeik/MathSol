@@ -65,9 +65,24 @@ internal class OperandParser(IServiceProvider serviceProvider) : IInternalParser
         return new NumberNode(Convert.ToDecimal(token.Value, CultureInfo.InvariantCulture));
     }
 
-    private static VariableNode ParseVariable(IEnumerator<IToken> tokens)
+    private IAstNode ParseVariable(IEnumerator<IToken> tokens, INamespace @namespace)
     {
-        var token = tokens.Consume<IdentifierToken>();
+        var token = tokens.Consume<IdentifierToken>(); //TODO: Implement dynamic function call
+
+        if (tokens.Current is LeftParenthesesToken)
+        {
+            tokens.Skip<LeftParenthesesToken>();
+            var @params = new List<IAstNode>();
+            while (tokens.Current is not RightParenthesesToken)
+            {
+                @params.Add(EqualityParser.Parse(tokens, @namespace));
+                if (tokens.Current is not RightParenthesesToken)
+                    tokens.Skip<CommaToken>();
+            }
+            tokens.Skip<RightParenthesesToken>();
+            return new DynamicFunctionCallNode(new VariableNode(token.Value), @params);
+        }
+
         return new VariableNode(token.Value);
     }
 
@@ -76,7 +91,7 @@ internal class OperandParser(IServiceProvider serviceProvider) : IInternalParser
         var obj = @namespace.GetIdentifierObject(tokens.Current.Value);
 
         if (obj is null or VariableNode)
-            return ParseVariable(tokens);
+            return ParseVariable(tokens, @namespace);
 
         if (obj is FunctionNode)
             return ParseFunction(tokens, @namespace);

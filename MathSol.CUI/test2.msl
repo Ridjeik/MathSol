@@ -1,0 +1,5 @@
+﻿define tangent(f(x), a) as {
+	g(x) := diff(f, x)
+	t(x) := f(a) + g(a) * (x - a)
+ 	return t
+}

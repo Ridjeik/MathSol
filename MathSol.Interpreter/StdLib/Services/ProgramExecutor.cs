@@ -62,10 +62,9 @@ public class ProgramExecutor(IBuiltinFunctionImplementationFactory builtinFuncti
                 return (new UndefinedNode(), false);
             case AssignmentNode assignmentNode:
                 VariableScope.SetVariable(assignmentNode.Left, coreSimplifiersExecutor.ExecuteRules(assignmentNode.Right));
-                return (new UndefinedNode(), false) ;
+                return (new UndefinedNode(), false);
             case FunctionDeclarationNode functionDeclarationNode:
-                functionDeclarationNode.Body = coreSimplifiersExecutor.ExecuteRules(functionDeclarationNode.Body);
-                VariableScope.SetVariable(new VariableNode(functionDeclarationNode.Function.Name), functionDeclarationNode);
+                VariableScope.SetVariable(new VariableNode(functionDeclarationNode.Function.Name), functionDeclarationNode.WithBody(coreSimplifiersExecutor.ExecuteRules(functionDeclarationNode.Body)));
                 return (new UndefinedNode(), false);
             case IfNode ifNode:
                 var result = ExecuteIf(coreSimplifiersExecutor, ifNode);
@@ -95,7 +94,7 @@ public class ProgramExecutor(IBuiltinFunctionImplementationFactory builtinFuncti
         return (new UndefinedNode(), false);
     }
 
-    private (IAstNode result, bool isTerminated) ExecuteSubprogram(IAstNode node, IEnumerable<VariableNode>? fixedVariables = null)
+    private (IAstNode result, bool isTerminated) ExecuteSubprogram(IAstNode node, IEnumerable<IAstNode>? fixedVariables = null)
     {
         var newVarScope = fixedVariables is not null ? VariableScope.WithFixed(fixedVariables) : VariableScope;
         var result = new ProgramExecutor(builtinFunctionImplementationFactory, variableScopeFactory, coreSimplifiersExecutor, substitute, newVarScope).Execute(node);
@@ -124,7 +123,18 @@ public class ProgramExecutor(IBuiltinFunctionImplementationFactory builtinFuncti
         var statements = new List<IAstNode>();
         foreach (var (param, value) in subProgramDefinitionNode.SubprogramSignature.Params.Zip(functionNode.Operands))
         {
-            statements.Add(new AssignmentNode(param, value));
+            if (param is VariableNode variable)
+            {
+                statements.Add(new AssignmentNode(variable, value));
+            }
+            else if (param is FunctionNode function)
+            {
+                statements.Add(new FunctionDeclarationNode(function, value));
+            }
+            else
+            {
+                throw new Exception($"Invalid parameter type {param.GetType()}");
+            }
         }
 
         if (subProgramDefinitionNode.Body is not ProgramNode programNode)

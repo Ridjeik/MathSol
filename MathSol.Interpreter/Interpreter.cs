@@ -1,6 +1,7 @@
 ﻿using MathSol.Interpreter.FileSystem;
 using MathSol.Interpreter.Parser.Interfaces;
 using MathSol.Interpreter.Parser.Utils;
+using MathSol.Interpreter.Preprocessor;
 using MathSol.Interpreter.StdLib.Interfaces;
 using MathSol.Interpreter.StdLib.Utils;
 using MathSol.Interpreter.Tokenizer.Interface;
@@ -30,6 +31,8 @@ public class Interpreter
         ArgumentNullException.ThrowIfNull(codeFile);
 
         var serviceProvider = this._serviceCollection.BuildServiceProvider();
+
+        codeFile = new Preprocessor.Preprocessor().Preprocess(codeFile);
 
         var tokens = serviceProvider.GetRequiredService<ITokenizer>().Tokenize(codeFile);
         //tokens.ToList().ForEach(Console.WriteLine);

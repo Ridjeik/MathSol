@@ -10,6 +10,19 @@ public class AdditionNode(params IAstNode[] operands) : BaseNode, IOperatorAstNo
 
     public override string ToString()
     {
-        return string.Join(" + ", Operands.Select(o => o.ToString()));
+        return Operands.Aggregate(string.Empty, (current, operand) => $"{current}{(current != string.Empty ? " " : "")}{NextOperand(operand, current == string.Empty)}");
+    }
+
+    private string NextOperand(IAstNode operand, bool first)
+    {
+        if(operand is NumberNode { Value: < 0 } number)
+        {
+            return $"- {-number.Value}";
+        }
+        if (operand is UnaryMinusNode unary)
+        {
+            return $"-({unary.Operand})";
+        }
+        return first ? $"{operand}" : $"+ {operand}";
     }
 }
