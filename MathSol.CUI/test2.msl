@@ -1,5 +1,14 @@
-﻿define tangent(f(x), a) as {
+define tangent(f(x), a) as {
 	g(x) := diff(f, x)
 	t(x) := f(a) + g(a) * (x - a)
  	return t
+}
+
+define test() as {
+	f(x) := x^2
+	return f
+}
+
+define test_test() as {
+	print("Test successful")
 }

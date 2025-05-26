@@ -4,31 +4,198 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MathSol.IDE"
+        xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit" 
         mc:Ignorable="d"
-        Title="MathSol IDE" Height="600" Width="900"
-        Background="#1E1E1E">
+        Title="MathSol IDE" Height="650" Width="950"
+        Background="#FF1E1E1E"
+        FontFamily="Segoe UI">
 
     <Window.Resources>
+        <SolidColorBrush x:Key="MaterialDesignPaper" Color="#FF252526"/>
+        <SolidColorBrush x:Key="MaterialDesignBody" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="MaterialDesignBodyLight" Color="#B0FFFFFF"/>
+        <SolidColorBrush x:Key="MaterialDesignBodyVeryLight" Color="#80FFFFFF"/>
+        <SolidColorBrush x:Key="MaterialDesignPrimary" Color="#FF007ACC"/>
+        <SolidColorBrush x:Key="MaterialDesignPrimaryDark" Color="#FF005A9E"/>
+        <SolidColorBrush x:Key="MaterialDesignPrimaryPressed" Color="#FF004C87"/>
+        <SolidColorBrush x:Key="MaterialDesignAccent" Color="#FF28a745"/>
+        <SolidColorBrush x:Key="MaterialDesignAccentDark" Color="#FF218838"/>
+        <SolidColorBrush x:Key="MaterialDesignAccentPressed" Color="#FF1E7E34"/>
+        <SolidColorBrush x:Key="MaterialDesignDivider" Color="#1FFFFFFF"/>
+        <SolidColorBrush x:Key="MaterialDesignHighlight" Color="#40FFFFFF"/>
+        <SolidColorBrush x:Key="MaterialDesignHighlightPressed" Color="#50FFFFFF"/>
+
+        <SolidColorBrush x:Key="TreeViewItemSelectionInactiveBackgroundBrush" Color="#FF3D3D3D"/>
+        <SolidColorBrush x:Key="TreeViewItemSelectionInactiveForegroundBrush" Color="#B0FFFFFF"/>
+
+        <SolidColorBrush x:Key="TreeViewItemMouseOverBackgroundBrush" Color="#40FFFFFF"/>
+        <SolidColorBrush x:Key="TreeViewItemSelectedBackgroundBrush" Color="#FF007ACC"/>
+        <SolidColorBrush x:Key="TreeViewItemSelectedForegroundBrush" Color="White"/>
+        <SolidColorBrush x:Key="TreeViewItemForegroundBrush" Color="#B0FFFFFF"/>
+
+        <Style x:Key="TreeViewToggleButton" TargetType="{x:Type ToggleButton}">
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Width" Value="16"/>
+            <Setter Property="Height" Value="16"/>
+            <Setter Property="Margin" Value="0,0,5,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border Background="Transparent" Width="16" Height="16">
+                            <Path x:Name="ExpandPath" Stroke="{StaticResource MaterialDesignBodyLight}" StrokeThickness="1.5" SnapsToDevicePixels="True"
+                                  HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 4 0 L 4 8 M 0 4 L 8 4"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="ExpandPath" Property="Data" Value="M 0 4 L 8 4" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ExpandPath" Property="Stroke" Value="{StaticResource MaterialDesignBody}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type TreeViewItem}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+            <Setter Property="Padding" Value="3,2"/>
+            <Setter Property="Foreground" Value="{StaticResource TreeViewItemForegroundBrush}"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <EventSetter Event="Expanded" Handler="TreeViewItem_Expanded"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition MinWidth="19" Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <ToggleButton x:Name="Expander" Style="{StaticResource TreeViewToggleButton}"
+                                          IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press"/>
+
+                            <Border x:Name="Bd" Grid.Column="1" Grid.ColumnSpan="2"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Padding="{TemplateBinding Padding}"
+                                    SnapsToDevicePixels="true">
+                                <ContentPresenter x:Name="PART_Header" 
+                                                  ContentSource="Header" 
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </Border>
+
+                            <ItemsPresenter x:Name="ItemsHost" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" 
+                                            Visibility="Collapsed"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="True">
+                                <Setter TargetName="ItemsHost" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsExpanded" Value="false">
+                                <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                            <Trigger Property="HasItems" Value="false">
+                                <Setter TargetName="Expander" Property="Visibility" Value="Hidden"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource TreeViewItemSelectedBackgroundBrush}" />
+                                <Setter Property="Foreground" Value="{StaticResource TreeViewItemSelectedForegroundBrush}" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource TreeViewItemSelectedBackgroundBrush}" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="true"/>
+                                    <Condition Property="IsSelectionActive" Value="false"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource TreeViewItemSelectionInactiveBackgroundBrush}" />
+                                <Setter Property="Foreground" Value="{StaticResource TreeViewItemSelectionInactiveForegroundBrush}" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource TreeViewItemSelectionInactiveBackgroundBrush}" />
+                            </MultiTrigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource TreeViewItemMouseOverBackgroundBrush}" />
+                                <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}" />
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="Transparent"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="ActivityBarButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Foreground" Value="{StaticResource MaterialDesignBodyLight}"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Width" Value="48"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="FontSize" Value="22"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Margin" Value="0,5,0,5"/>
             <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="ToolTipService.Placement" Value="Right"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="3">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#444444"/>
+                                <Setter Property="Background" Value="{StaticResource MaterialDesignHighlight}" />
+                                <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="#555555"/>
+                                <Setter Property="Background" Value="{StaticResource MaterialDesignHighlightPressed}" />
+                                <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="GeneralButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource MaterialDesignPrimary}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource MaterialDesignPrimaryDark}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="{StaticResource MaterialDesignPrimaryPressed}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#FF444444"/>
+                                <Setter Property="Foreground" Value="{StaticResource MaterialDesignBodyVeryLight}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -37,34 +204,103 @@
         </Style>
 
         <Style x:Key="RoundPlayButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="40"/>
-            <Setter Property="Height" Value="40"/>
-            <Setter Property="Background" Value="#28a745"/>
+            <Setter Property="Width" Value="56"/>
+            <Setter Property="Height" Value="56"/>
+            <Setter Property="Background" Value="{StaticResource MaterialDesignAccent}"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Normal"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="HorizontalAlignment" Value="Right"/>
             <Setter Property="VerticalAlignment" Value="Bottom"/>
-            <Setter Property="Margin" Value="0,0,15,15"/>
+            <Setter Property="Margin" Value="0,0,16,16"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Grid>
-                            <Ellipse Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1"/>
+                            <Ellipse Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="0"/>
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#218838"/>
+                                <Setter Property="Background" Value="{StaticResource MaterialDesignAccentDark}"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="#1e7e34"/>
+                                <Setter Property="Background" Value="{StaticResource MaterialDesignAccentPressed}"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Background" Value="#cccccc"/>
-                                <Setter Property="Foreground" Value="#666666"/>
+                                <Setter Property="Background" Value="#FF444444"/>
+                                <Setter Property="Foreground" Value="{StaticResource MaterialDesignBodyVeryLight}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#FF333337"/>
+            <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource MaterialDesignDivider}"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Padding" Value="6,4"/>
+            <Setter Property="CaretBrush" Value="{StaticResource MaterialDesignBody}"/>
+            <Setter Property="SelectionBrush" Value="{StaticResource MaterialDesignPrimary}"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource MaterialDesignPrimary}"/>
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource MaterialDesignPrimary}"/>
+                    <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="#FF333337"/>
+            <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource MaterialDesignDivider}"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="Padding" Value="6,4"/>
+        </Style>
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Padding" Value="6,4"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource MaterialDesignHighlight}"/>
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{StaticResource MaterialDesignPrimary}"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{StaticResource MaterialDesignBodyLight}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource MaterialDesignBodyLight}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal">
+                            <Border x:Name="CheckBoxBorder" Width="18" Height="18" BorderThickness="2" Margin="0,0,8,0" VerticalAlignment="Center"
+                                    BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}">
+                                <Path x:Name="CheckMark" Data="M4,8 L8,12 L14,5" Stroke="White" StrokeThickness="2" Visibility="Collapsed" SnapsToDevicePixels="True"/>
+                            </Border>
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="CheckBoxBorder" Property="Background" Value="{StaticResource MaterialDesignPrimary}"/>
+                                <Setter TargetName="CheckBoxBorder" Property="BorderBrush" Value="{StaticResource MaterialDesignPrimary}"/>
+                                <Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="CheckBoxBorder" Property="BorderBrush" Value="{StaticResource MaterialDesignPrimary}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -81,52 +317,74 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition x:Name="SidePanelColumn" Width="250" MinWidth="150"/>
+            <ColumnDefinition x:Name="SidePanelColumn" Width="280" MinWidth="200" MaxWidth="500"/>
             <ColumnDefinition x:Name="SplitterColumn" Width="Auto" />
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Row="0" Grid.Column="0" Background="#333333" Padding="5">
-            <StackPanel>
-                <Button x:Name="ExplorerButton" Content="📄" Style="{StaticResource ActivityBarButtonStyle}" Click="ActivityBarButton_Click" Tag="ExplorerPanel"/>
-                <Button x:Name="SearchButton" Content="🔍" Style="{StaticResource ActivityBarButtonStyle}" Click="ActivityBarButton_Click" Tag="SearchPanel"/>
-                <Button x:Name="SettingsButton" Content="⚙️" Style="{StaticResource ActivityBarButtonStyle}" Click="ActivityBarButton_Click" Tag="SettingsPanel" Margin="0"/>
+        <Border Grid.Row="0" Grid.Column="0" Background="#FF333333" Padding="0,5">
+            <StackPanel VerticalAlignment="Top">
+                <Button x:Name="ExplorerButton" Content="📄" Style="{StaticResource ActivityBarButtonStyle}" Click="ActivityBarButton_Click" Tag="ExplorerPanel" ToolTip="Explorer"/>
+                <Button x:Name="SearchButton" Content="🔍" Style="{StaticResource ActivityBarButtonStyle}" Click="ActivityBarButton_Click" Tag="SearchPanel" ToolTip="Search"/>
+                <Button x:Name="SettingsButton" Content="⚙️" Style="{StaticResource ActivityBarButtonStyle}" Click="ActivityBarButton_Click" Tag="SettingsPanel" ToolTip="Settings" Margin="0"/>
             </StackPanel>
         </Border>
 
         <Grid Grid.Row="0" Grid.Column="1">
-            <Border x:Name="ExplorerPanel" Background="#252526" Padding="10" Visibility="Visible" VerticalAlignment="Stretch">
+            <Border x:Name="ExplorerPanel" Background="{StaticResource MaterialDesignPaper}" Padding="12" Visibility="Visible" VerticalAlignment="Stretch">
                 <DockPanel LastChildFill="True">
-                    <TextBlock Text="ПРОВІДНИК" DockPanel.Dock="Top" FontSize="11" Foreground="#CCCCCC" FontWeight="Bold" Margin="0,0,0,5"/>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <StackPanel Margin="0,10,0,0">
-                            <TextBlock Text="📄 test.msl" Foreground="White" Margin="0,2"/>
-                            <TextBlock Text="📄 another_file.msl" Foreground="White" Margin="0,2"/>
-                        </StackPanel>
-                    </ScrollViewer>
+                    <TextBlock Text="ПРОВІДНИК" DockPanel.Dock="Top" FontSize="12" Foreground="{StaticResource MaterialDesignBodyLight}" FontWeight="SemiBold" Margin="0,0,0,10"/>
+
+                    <Grid DockPanel.Dock="Top" Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="NewFileButton" Grid.Column="0" Content="New .msl" Style="{StaticResource GeneralButtonStyle}" Click="NewFileButton_Click" Padding="8,4" Margin="0,0,2,0" FontSize="12"/>
+                        <Button x:Name="SaveFileButton" Grid.Column="1" Content="Save File" Style="{StaticResource GeneralButtonStyle}" Click="SaveFileButton_Click" Padding="8,4" Margin="2,0,0,0" FontSize="12" IsEnabled="False"/>
+                    </Grid>
+
+                    <Button x:Name="ChooseDirectoryButton" Content="Choose Directory..." DockPanel.Dock="Top" Style="{StaticResource GeneralButtonStyle}" Click="ChooseDirectoryButton_Click"/>
+                    <TextBlock x:Name="CurrentDirectoryPathTextBlock" DockPanel.Dock="Top" Text="No directory selected." Foreground="{StaticResource MaterialDesignBodyVeryLight}" FontSize="11" Margin="0,5,0,10" TextTrimming="CharacterEllipsis"/>
+
+                    <TreeView x:Name="DirectoryTreeView" Background="Transparent" BorderThickness="0" Margin="0,5,0,0"
+                              ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                              ScrollViewer.VerticalScrollBarVisibility="Auto"
+                              SelectedItemChanged="DirectoryTreeView_SelectedItemChanged">
+                        <TreeView.Resources>
+                            <HierarchicalDataTemplate DataType="{x:Type local:FileSystemItem}" ItemsSource="{Binding Children}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Icon}" Margin="0,0,8,0" FontFamily="Segoe MDL2 Assets" VerticalAlignment="Center" Foreground="{StaticResource MaterialDesignBodyLight}"/>
+                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </HierarchicalDataTemplate>
+                        </TreeView.Resources>
+                    </TreeView>
                 </DockPanel>
             </Border>
-            <Border x:Name="SearchPanel" Background="#252526" Padding="10" Visibility="Collapsed" VerticalAlignment="Stretch">
+
+            <Border x:Name="SearchPanel" Background="{StaticResource MaterialDesignPaper}" Padding="12" Visibility="Collapsed" VerticalAlignment="Stretch">
                 <DockPanel LastChildFill="True">
-                    <TextBlock Text="ПОШУК" DockPanel.Dock="Top" FontSize="11" Foreground="#CCCCCC" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <TextBlock Text="ПОШУК" DockPanel.Dock="Top" FontSize="12" Foreground="{StaticResource MaterialDesignBodyLight}" FontWeight="SemiBold" Margin="0,0,0,10"/>
                     <StackPanel>
-                        <TextBox Margin="0,5,0,10" Text="Search query..."/>
-                        <TextBlock Text="Search results will appear here." Foreground="#AAAAAA" TextWrapping="Wrap"/>
+                        <TextBox Margin="0,5,0,10" Text=""/>
+                        <TextBlock Text="Search results will appear here." Foreground="{StaticResource MaterialDesignBodyVeryLight}" TextWrapping="Wrap"/>
                     </StackPanel>
                 </DockPanel>
             </Border>
-            <Border x:Name="SettingsPanel" Background="#252526" Padding="10" Visibility="Collapsed" VerticalAlignment="Stretch">
+
+            <Border x:Name="SettingsPanel" Background="{StaticResource MaterialDesignPaper}" Padding="12" Visibility="Collapsed" VerticalAlignment="Stretch">
                 <DockPanel LastChildFill="True">
-                    <TextBlock Text="НАЛАШТУВАННЯ" DockPanel.Dock="Top" FontSize="11" Foreground="#CCCCCC" FontWeight="Bold" Margin="0,0,0,5"/>
-                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <TextBlock Text="НАЛАШТУВАННЯ" DockPanel.Dock="Top" FontSize="12" Foreground="{StaticResource MaterialDesignBodyLight}" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel>
-                            <CheckBox Content="Enable Autosave" Foreground="White" Margin="0,5"/>
-                            <TextBlock Text="Theme:" Foreground="White" Margin="0,10,0,2"/>
+                            <CheckBox Content="Enable Autosave" Margin="0,8"/>
+                            <TextBlock Text="Theme:" Foreground="{StaticResource MaterialDesignBodyLight}" Margin="0,10,0,5"/>
                             <ComboBox SelectedIndex="0" Margin="0,0,0,10">
                                 <ComboBoxItem>Dark+</ComboBoxItem>
                                 <ComboBoxItem>Light+</ComboBoxItem>
                             </ComboBox>
-                            <TextBlock Text="More settings..." Foreground="#AAAAAA"/>
+                            <TextBlock Text="More settings..." Foreground="{StaticResource MaterialDesignBodyVeryLight}"/>
                         </StackPanel>
                     </ScrollViewer>
                 </DockPanel>
@@ -134,11 +392,9 @@
         </Grid>
 
         <GridSplitter x:Name="VerticalSplitter" Grid.Row="0" Grid.Column="2"
-                      Width="5"
-                      Background="#333333"
-                      HorizontalAlignment="Center"
-                      VerticalAlignment="Stretch"
-                      ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
+                      Width="3" Background="#FF444444" ShowsPreview="True"
+                      HorizontalAlignment="Center" VerticalAlignment="Stretch"
+                      ResizeBehavior="PreviousAndNext"/>
 
         <Grid Grid.Row="0" Grid.Column="3">
             <Grid.RowDefinitions>
@@ -147,53 +403,45 @@
                 <RowDefinition Height="200" MinHeight="100"/>
             </Grid.RowDefinitions>
 
-            <TextBox
-                Grid.Row="0"
-                x:Name="CodeEditor"
-                Text="// Введіть ваш MathSol код тут...&#x0a;f(x) := x^2&#x0a;print(diff(f, x))"
-                Foreground="White"
-                Background="#1E1E1E" FontFamily="Consolas"
-                FontSize="14"
-                AcceptsReturn="True"
-                TextWrapping="NoWrap"
-                VerticalScrollBarVisibility="Auto"
-                HorizontalScrollBarVisibility="Auto"
-                BorderThickness="0"
-                VerticalContentAlignment="Top"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"/>
+            <Grid Grid.Row="0">
+                <avalonEdit:TextEditor
+                    x:Name="AvalonTextEditor"
+                    FontFamily="Consolas"
+                    FontSize="14"
+                    Background="#FF1E1E1E"
+                    Foreground="{StaticResource MaterialDesignBody}"
+                    ShowLineNumbers="True"
+                    LineNumbersForeground="{StaticResource MaterialDesignBodyVeryLight}"
+                    SyntaxHighlighting="MSL" 
+                    Padding="4"
+                    WordWrap="False"
+                    HorizontalScrollBarVisibility="Auto"
+                    VerticalScrollBarVisibility="Auto"/>
 
-            <Button
-                Grid.Row="0"
-                x:Name="RunButton"
-                Content="▶"
-                Style="{StaticResource RoundPlayButtonStyle}"
-                ToolTip="Run Code"/>
-            <GridSplitter Grid.Row="1"
-                           Height="5"
-                           Background="#333333"
-                           HorizontalAlignment="Stretch"
-                           VerticalAlignment="Center"
-                           ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
+                <Button x:Name="RunButton" Content="▶" Style="{StaticResource RoundPlayButtonStyle}"
+                        ToolTip="Run Code" Click="RunButton_Click"/>
+            </Grid>
 
-            <Border Grid.Row="2" Background="#252526" Padding="10">
+            <GridSplitter Grid.Row="1" Height="3" Background="#FF444444"
+                          HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                          ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
+
+            <Border Grid.Row="2" Background="{StaticResource MaterialDesignPaper}" Padding="12">
                 <DockPanel LastChildFill="True">
-                    <TextBlock Text="ВИВІД" DockPanel.Dock="Top" FontSize="11" Foreground="#CCCCCC" FontWeight="Bold" Margin="0,0,0,5"/>
-                    <ScrollViewer x:Name="OutputScrollViewer" VerticalScrollBarVisibility="Auto">
-                        <TextBlock
-                             x:Name="OutputConsole"
-                             Text=">>> Результати виконання будуть тут..."
-                             Foreground="White"
-                             FontFamily="Consolas"
-                             FontSize="12"
-                             TextWrapping="Wrap"/>
+                    <TextBlock Text="ВИВІД" DockPanel.Dock="Top" FontSize="12" Foreground="{StaticResource MaterialDesignBodyLight}" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                    <ScrollViewer x:Name="OutputScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <TextBlock x:Name="OutputConsole"
+                                   Text=">>> Результати виконання будуть тут..."
+                                   Foreground="{StaticResource MaterialDesignBody}"
+                                   FontFamily="Consolas" FontSize="13"
+                                   TextWrapping="Wrap"/>
                     </ScrollViewer>
                 </DockPanel>
             </Border>
         </Grid>
 
-        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Background="#007ACC" Padding="5,3">
-            <TextBlock Text="Готово" Foreground="White" FontSize="11" VerticalAlignment="Center"/>
+        <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Background="{StaticResource MaterialDesignPrimary}" Padding="8,5">
+            <TextBlock Text="Готово" Foreground="White" FontSize="12" VerticalAlignment="Center"/>
         </Border>
     </Grid>
 </Window>

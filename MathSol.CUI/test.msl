@@ -1,4 +1,3 @@
-﻿%include test2.msl
+%include test2.msl
 
-f(x) := x^2
-print(tangent(f, 3))
+print(test() ^ 2)
